@@ -13,7 +13,7 @@ namespace Persistence.Configurations
             builder.Property(p => p.Title).HasColumnName("Title").IsRequired(true);
             builder.Property(p => p.Category).HasColumnName("Category").IsRequired(false);
             builder.Property(p => p.City).HasColumnName("City").IsRequired(false);
-            builder.Property(p => p.Date).HasColumnName("Date").IsRequired(true);
+            builder.Property(p => p.Date).HasColumnType("DateTime").HasColumnName("Date").IsRequired(true);
             builder.Property(p => p.Description).HasColumnName("Description").IsRequired(false);
             builder.Property(p => p.Venue).HasColumnName("Venue").IsRequired(false);
         }
