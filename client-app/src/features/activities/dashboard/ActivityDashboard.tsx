@@ -14,16 +14,18 @@ interface ADInteface {
     closeForm: () => void;
     createOrEdit: (activity: IActivity) => void;
     deleteActivity: (id: string) => void;
+    submitting: boolean;
 }
 
 export default function ActivityDashboard({ activities, selectedActivity, selectActivity,
-    cancelSelectActivity, editMode, openForm, closeForm, createOrEdit, deleteActivity }: ADInteface) {
+    cancelSelectActivity, editMode, openForm, closeForm, createOrEdit, deleteActivity, submitting }: ADInteface) {
     return (
         <Grid>
             <Grid.Column width="10">
                 <ActivityList activities={activities}
                     selectActivity={selectActivity}
                     deleteActivity={deleteActivity}
+                    submitting={submitting}
                 />
             </Grid.Column>
             <Grid.Column width="6">
@@ -38,6 +40,7 @@ export default function ActivityDashboard({ activities, selectedActivity, select
                     closeForm={closeForm}
                     activity={selectedActivity}
                     createOrEdit={createOrEdit}
+                    submitting={submitting}
                     />}
             </Grid.Column>
         </Grid>

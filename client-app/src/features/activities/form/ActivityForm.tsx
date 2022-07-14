@@ -7,10 +7,11 @@ interface AFInteface {
     activity: IActivity | undefined;
     closeForm: () => void;
     createOrEdit: (activity: IActivity) => void;
+    submitting: boolean;
 }
 
 
-export default function ActivityForm({ activity: selectedActivity, closeForm, createOrEdit }: AFInteface) {
+export default function ActivityForm({ activity: selectedActivity, closeForm, createOrEdit, submitting }: AFInteface) {
 
     const initialState = selectedActivity ?? {
         id: '',
@@ -38,10 +39,10 @@ export default function ActivityForm({ activity: selectedActivity, closeForm, cr
                 <Form.Input placeholder="Наименование" value={activity.title} name='title' onChange={handleInputChange} />
                 <Form.TextArea placeholder="Примечание" value={activity.description} name='description' onChange={handleInputChange} />
                 <Form.Input placeholder="Категория" value={activity.category} name='category' onChange={handleInputChange} />
-                <Form.Input placeholder="Дата" value={activity.date} name='date' onChange={handleInputChange} />
+                <Form.Input type="date" placeholder="Дата" value={activity.date} name='date' onChange={handleInputChange} />
                 <Form.Input placeholder="Город" value={activity.city} name='city' onChange={handleInputChange} />
                 <Form.Input placeholder="Значение" value={activity.venue} name='venue' onChange={handleInputChange} />
-                <Button floated="right" positive type="submit" content="Подтвердить" />
+                <Button loading={submitting} floated="right" positive type="submit" content="Подтвердить" />
                 <Button onClick={() => closeForm()} floated="right" type="button" content="Отмена" />
             </Form>
         </Segment>

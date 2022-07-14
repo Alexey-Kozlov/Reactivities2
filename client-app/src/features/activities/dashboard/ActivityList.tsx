@@ -1,14 +1,23 @@
-﻿import { Button, Item, Label, Segment } from "semantic-ui-react";
+﻿import React, { useState } from "react";
+import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
 
 interface ALInteface {
     activities: IActivity[];
     selectActivity: (id: string) => void;
     deleteActivity: (id: string) => void;
+    submitting: boolean;
 }
 
 
-export default function ActivityList({ activities, selectActivity, deleteActivity }: ALInteface) {
+export default function ActivityList({ activities, selectActivity, deleteActivity, submitting }: ALInteface) {
+
+    const [delButtonId, setDelButtonId] = useState<string>('');
+    function handleDelButtonClick(e: React.MouseEvent<HTMLButtonElement>, id: string) {
+        setDelButtonId(e.currentTarget.name);
+        deleteActivity(id);
+    }
+
     return (
         <Segment>
             <Item.Group divided>
@@ -23,7 +32,13 @@ export default function ActivityList({ activities, selectActivity, deleteActivit
                             </Item.Description>
                             <Item.Extra>
                                 <Button onClick={() => selectActivity(activity.id)} floated="right" content="Просмотр" color="blue" />
-                                <Button onClick={() => deleteActivity(activity.id)} floated="right" content="Удалить" color="red" />
+                                <Button
+                                    name={activity.id}
+                                    loading={submitting && delButtonId === activity.id}
+                                    onClick={(e) => handleDelButtonClick(e, activity.id)}
+                                    floated="right"
+                                    content="Удалить"
+                                    color="red" />
                                 <Label basic content={activity.category} />
                             </Item.Extra>
                         </Item.Content>
