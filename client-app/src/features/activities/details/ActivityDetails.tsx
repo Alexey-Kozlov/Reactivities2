@@ -1,26 +1,25 @@
-﻿import { Button, ButtonGroup, Card, Image } from "semantic-ui-react";
-import { IActivity } from "../../../app/models/activity";
+﻿import { Button, ButtonGroup, Card, Image } from "semantic-ui-react";  
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface ALInteface {
-    activity: IActivity;
-    cancelSelectActivity: () => void;
-    openForm: (id: string) => void;
-}
+export default function ActivityDetails() {
 
+    const { activityStore } = useStore();
+    const { selectedActivity, openForm, cancelSelectedActivity } = activityStore;
+    if (!selectedActivity) return <LoadingComponent content='Загрузка...' />;
 
-export default function ActivityDetails({ activity, cancelSelectActivity, openForm }: ALInteface) {
     return (
         <Card fluid>
-            <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
+            <Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} />
             <Card.Content>
-                <Card.Header>{activity.title}</Card.Header>
-                <Card.Meta><span>{activity.date}</span></Card.Meta>
-                <Card.Description>{activity.description}</Card.Description>
+                <Card.Header>{selectedActivity.title}</Card.Header>
+                <Card.Meta><span>{selectedActivity.date}</span></Card.Meta>
+                <Card.Description>{selectedActivity.description}</Card.Description>
             </Card.Content>
             <Card.Content extra>
                 <ButtonGroup widths="2">
-                    <Button onClick={() => openForm(activity.id)} basic color="blue" content="Редактирование" />
-                    <Button onClick={() => cancelSelectActivity()} basic color="grey" content="Отмена" />
+                    <Button onClick={() => openForm(selectedActivity.id)} basic color="blue" content="Редактирование" />
+                    <Button onClick={() => cancelSelectedActivity()} basic color="grey" content="Отмена" />
                 </ButtonGroup>
             </Card.Content>
         </Card>            
