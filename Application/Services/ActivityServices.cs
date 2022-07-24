@@ -4,6 +4,7 @@ using Domain;
 using Persistence;
 using Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Application.Core;
 
 namespace Application.Services
 {
@@ -19,48 +20,47 @@ namespace Application.Services
             _logger = logger;
         }
 
-        public async Task<List<Activity>> List()
+        public async Task<Result<List<Activity>>> List()
         {
             _logger.LogInformation($"GetList");
-            return await _context.Activity.ToListAsync();
+            var activities = await _context.Activity.ToListAsync();
+            return Result<List<Activity>>.Success(activities);
         }
 
-        public async Task<Activity> Details(Guid id)
+        public async Task<Result<Activity>> Details(Guid id)
         {
-            return await _context.Activity.FindAsync(id);
+            var activity = await _context.Activity.FindAsync(id);
+            return Result<Activity>.Success(activity);
         }
 
-        public async Task Create(Activity activity)
+        public async Task<Result<object>> Create(Activity activity)
         {
             if(activity.Id == Guid.Empty)
             {                
                 activity.Id = new Guid();
             }
             await _context.Activity.AddAsync(activity);
-            await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync() > 0;
+            if (!result) return Result<object>.Error("Ошибка создания записи");
+            return Result<object>.Success("");
         }
 
-        public async Task<bool> Edit(Activity activity)
+        public async Task<Result<bool>> Edit(Activity activity)
         {
-            Activity item = null;
-            if((item = await Details(activity.Id)) == null)
-            {
-                return false;
-            }
-            _mapper.Map(activity, item);
-            await _context.SaveChangesAsync();
-            return true;
+            var item = await Details(activity.Id);
+            _mapper.Map(activity, item.Value);
+            var result = await _context.SaveChangesAsync() > 0;
+            if (!result) return Result<bool>.Error("Ошибка редактирования записи");
+            return Result<bool>.Success(true);
         }
-        public async Task<bool> Delete(Guid Id)
+
+        public async Task<Result<bool>> Delete(Guid Id)
         {
-            Activity item = null;
-            if ((item = await Details(Id)) == null)
-            {
-                return false;
-            }
-            _context.Remove(item);
-            await _context.SaveChangesAsync();
-            return true;
+            var item = await Details(Id);
+            _context.Remove(item.Value);
+            var result = await _context.SaveChangesAsync() > 0;
+            if (!result) return Result<bool>.Error("Ошибка удаления записи");
+            return Result<bool>.Success(true);
         }
     }
 }

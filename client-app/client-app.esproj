@@ -10,6 +10,5 @@
   <ItemGroup>
     <Folder Include="public\assets\" />
     <Folder Include="src\app\models\" />
-    <Folder Include="src\app\api\" />
   </ItemGroup>
 </Project>

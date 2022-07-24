@@ -1,13 +1,14 @@
 ﻿using Domain;
+using Application.Core;
 
 namespace Application.Interfaces
 {
     public interface IActivityService
     {
-        Task<List<Activity>> List();
-        Task<Activity> Details(Guid id);
-        Task Create(Activity activity);
-        Task<bool> Edit(Activity activity);
-        Task<bool> Delete(Guid Id);
+        Task<Result<List<Activity>>> List();
+        Task<Result<Activity>> Details(Guid id);
+        Task<Result<object>> Create(Activity activity);
+        Task<Result<bool>> Edit(Activity activity);
+        Task<Result<bool>> Delete(Guid Id);
     }
 }

@@ -1,17 +1,50 @@
-import { act } from '@testing-library/react';
-import axios, { AxiosResponse } from 'axios';
-import { resolve } from 'dns';
+﻿import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
+import { history } from '../..';
 import { IActivity } from '../models/activity';
+import { ServerError } from '../models/serverError';
+import { store } from '../stores/store';
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 axios.interceptors.response.use(async response => {
-    try {
-        await sleep(1000);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return await Promise.reject(error);
+
+    await sleep(1000);
+    return response;
+
+}, (error: AxiosError) => {
+    const { data, status, config } = error.response!;
+    if (typeof data === 'string') {
+        toast.error(data);
+    } else {
+        const errorData: string[] = (data as any).errors;
+        switch (status) {
+            case 400:
+                if (config.method === 'get' && errorData.hasOwnProperty('id')) {
+                    history.push('/not-found');
+                }
+                if (errorData) {
+                    const errorsList = [];
+                    for (const key in errorData) {
+                        if (errorData[key]) {
+                            errorsList.push(errorData[key]);
+                        }
+                    }
+                    throw errorsList.flat();
+                }
+                break;
+            case 401:
+                toast.error('Неавторизовано');
+                break;
+            case 404:
+                history.push('/not-found');
+                break;
+            case 500:
+                store.commonStore.setServerErros(data as ServerError);
+                history.push('/server-error');
+                break;
+        }
     }
+    return Promise.reject(error);
 });
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 const request = {

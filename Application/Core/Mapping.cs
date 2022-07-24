@@ -4,9 +4,9 @@ using Domain;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application
+namespace Application.Core
 {
-    public class Mapping :Profile
+    public class Mapping : Profile
     {
         public Mapping()
         {
@@ -16,7 +16,7 @@ namespace Application
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
-                .ForMember(dest => dest.Venue, opt => opt.MapFrom(src => src.Venue));                
+                .ForMember(dest => dest.Venue, opt => opt.MapFrom(src => src.Venue));
         }
     }
 }

@@ -2,7 +2,8 @@
 using Persistence;
 using Application.Services;
 using Application.Interfaces;
-using Application;
+using FluentValidation.AspNetCore;
+using Application.Core;
 
 namespace API.Extentions
 {
@@ -14,7 +15,10 @@ namespace API.Extentions
             {
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddFluentValidation(config =>
+            {
+                config.RegisterValidatorsFromAssemblyContaining<ActivityValidator>();
+            });
             builder.Services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>

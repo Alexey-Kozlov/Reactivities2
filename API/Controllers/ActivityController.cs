@@ -17,24 +17,23 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("GetActivity")]
-        public async Task<ActionResult<List<Activity>>> GetActivity()
+        public async Task<IActionResult> GetActivity()
         {
-            return await _activityService.List();
+            return HandleResult(await _activityService.List());
         }
 
         [HttpGet]
         [Route("GetActivity/{id}")]
-        public async Task<ActionResult<Activity>> GetActivity(Guid id)
-        {
-            return await _activityService.Details(id);
+        public async Task<IActionResult> GetActivity(Guid id)
+        {            
+            return HandleResult(await _activityService.Details(id));
         }
 
         [HttpPost]
         [Route("CreateActivity")]
         public async Task<IActionResult> CreateActivity(Activity activity)
         {
-            await _activityService.Create(activity);
-            return Ok();
+            return HandleResult(await _activityService.Create(activity));
         }
 
         [HttpPost]
@@ -42,27 +41,14 @@ namespace API.Controllers
         public async Task<IActionResult> EditActivity(Activity activity, Guid id)
         {
             activity.Id = id;
-            if (await _activityService.Edit(activity))
-            {
-                return Ok();
-            }
-            else
-            {
-                return StatusCode(500);
-            }
+            return HandleResult(await _activityService.Edit(activity));
+
         }
         [HttpPost]
         [Route("DeleteActivity/{id}")]
         public async Task<IActionResult> DeleteActivity( Guid id)
         {
-            if (await _activityService.Delete(id))
-            {
-                return Ok();
-            }
-            else
-            {
-                return StatusCode(500);
-            }
+            return HandleResult(await _activityService.Delete(id));
         }
     }
 }
