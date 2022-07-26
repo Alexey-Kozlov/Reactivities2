@@ -1,6 +1,9 @@
-﻿    import { observer } from 'mobx-react-lite';
-    import { Button, Header, Item, Segment, Image } from 'semantic-ui-react'
-    import { IActivity } from "../../../app/models/activity";
+﻿import { format } from "date-fns";
+import { ru } from 'date-fns/locale'
+import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
+import { Button, Header, Item, Segment, Image } from 'semantic-ui-react'
+import { IActivity } from "../../../app/models/activity";
 
     const activityImageStyle = {
         filter: 'brightness(30%)'
@@ -33,7 +36,7 @@
                                         content={activity.title}
                                         style={{ color: 'white' }}
                                     />
-                                    <p>{activity.date}</p>
+                                    <p>{format(new Date(activity.date!),'dd.MM.yyyy HH:mm', { locale: ru })}</p>
                                     <p>
                                         Hosted by <strong>Bob</strong>
                                     </p>
@@ -45,7 +48,7 @@
                 <Segment clearing attached='bottom'>
                     <Button color='teal'>Присоединиться к действию</Button>
                     <Button>Отменить действие</Button>
-                    <Button color='orange' floated='right'>
+                    <Button as={Link} to={`/editActivity/${activity.id}`} color='orange' floated='right'>
                         Управление событиями
                     </Button>
                 </Segment>

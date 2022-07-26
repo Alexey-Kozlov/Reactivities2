@@ -1,6 +1,8 @@
 ﻿import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { IActivity } from "../models/activity";
+import { addHours, format } from "date-fns";
+import { ru } from 'date-fns/locale'
 
 export default class ActivityStore {
 
@@ -8,7 +10,7 @@ export default class ActivityStore {
     selectedActivity: IActivity | undefined = undefined;
     editMode: boolean = false;
     loading: boolean = false;
-    loadingInitial: boolean = true;
+    loadingInitial: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -16,13 +18,13 @@ export default class ActivityStore {
 
     get activitiesByDate() {
         return Array.from(this.activityRegistry.values()).sort((a, b) =>
-            Date.parse(a.date) - Date.parse(b.date));
+            new Date(a.date!).getTime() - new Date(b.date!).getTime());
     }
 
     get groupedActivities() {
         return Object.entries(
             this.activitiesByDate.reduce((activities, activity) => {
-                const date = activity.date;
+                const date = format(new Date(activity.date!), 'dd.MM.yyyy', { locale: ru });
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
                 return activities;
             }, {} as {[key : string] : IActivity[]})
@@ -50,7 +52,7 @@ export default class ActivityStore {
             category: '',
             description: '',
             city: '',
-            date: '',
+            date: null,
             venue: ''
         }
         if (id.length === 0) {
@@ -80,7 +82,6 @@ export default class ActivityStore {
     }
 
     private setActivity = (activity: IActivity) => {
-        activity.date = activity.date.split('T')[0];
         this.activityRegistry.set(activity.id, activity);
     }
 
@@ -93,9 +94,11 @@ export default class ActivityStore {
     }
 
    createActivity = async (activity: IActivity) => {
-        this.loading = true;
+       this.loading = true;
+       activity.date = addHours(activity.date!, 3);
         try {
             await agent.Activities.create(activity);
+            activity.date = addHours(activity.date!, -3);
             runInAction(() => {
                 this.activityRegistry.set(activity.id, activity);
                 this.setSelectedActivity(activity);
@@ -112,8 +115,10 @@ export default class ActivityStore {
 
     updateActivity = async (activity: IActivity) => {
         this.loading = true;
+        activity.date = addHours(activity.date!, 3);
         try {
             await agent.Activities.edit(activity);
+            activity.date = addHours(activity.date!, -3);
             runInAction(() => {
                 this.activityRegistry.set(activity.id, activity);
                 this.setSelectedActivity(activity);

@@ -1,4 +1,6 @@
-﻿import { Link } from "react-router-dom";
+﻿import { format } from "date-fns";
+import { ru } from 'date-fns/locale'
+import { Link } from "react-router-dom";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
 
@@ -27,7 +29,7 @@ export default function ActivityListItems({ activity }: ALI) {
             </Segment>
             <Segment>
                 <span>
-                    <Icon name='clock' />{activity.date}
+                    <Icon name='clock' />{format(new Date(activity.date!), 'dd.MM.yyyy HH:mm', { locale: ru })}
                     <Icon name='marker' />{activity.venue}
                 </span>
             </Segment>
